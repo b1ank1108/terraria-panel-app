@@ -25,7 +25,7 @@
 #remove the # in front of commands to enable them.
 
 #Load a world and automatically start the server.
-world=Terraria\Worlds\world1.wld
+world=Terraria/Worlds/world1.wld
 
 #Creates a new world if none is found. World size is specified by: 1(small), 2(medium), and 3(large).
 autocreate=1
@@ -46,32 +46,32 @@ maxplayers=8
 port=7777
 
 #Set the server password
-#password=p@55w0rd
+password=1111
 
 #Set the message of the day
-#motd=Please don抰 cut the purple trees!
+motd=hhh
 
 #Sets the folder where world files will be stored
 #worldpath=C:\Users\Defaults\My Documents\My Games\Terraria\Worlds\
 
 #Sets the number of rolling world backups to keep
-#worldrollbackstokeep=2
+worldrollbackstokeep=0
 
 #The location of the banlist. Defaults to "banlist.txt" in the working directory.
 #banlist=banlist.txt
 
 #Adds addition cheat protection.
-#secure=1
+secure=0
 
 #Sets the server language from its language code. 
 #English = en-US, German = de-DE, Italian = it-IT, French = fr-FR, Spanish = es-ES, Russian = ru-RU, Chinese = zh-Hans, Portuguese = pt-BR, Polish = pl-PL,
-#language=en-US
+language=zh-Hans
 
 #Automatically forward ports with uPNP
-#upnp=1
+upnp=0
 
 #Reduces enemy skipping but increases bandwidth usage. The lower the number the less skipping will happen, but more data is sent. 0 is off.
-#npcstream=60
+npcstream=0
 
 #Default system priority 0:Realtime, 1:High, 2:AboveNormal, 3:Normal, 4:BelowNormal, 5:Idle
 priority=1

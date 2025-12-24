@@ -1,44 +1,88 @@
-# Terraria-panel-app
+# Terraria Panel
 
-**English** | [中文](./README-zh.md) 
+A web-based management panel for Terraria dedicated servers, built with Go and React.
 
-Terraria server panel,  with Terraria `1449` version
+## Features
 
-## Preview
+- **Server Control** - Start/stop Terraria server with one click
+- **Real-time Status** - Monitor server running state
+- **Configuration Management** - Edit server settings via web UI (raw text or structured form)
+- **Console Commands** - Send commands directly to the server
+- **Log Viewer** - View server logs in real-time
+- **Backup Management** - List, restore, and delete world backups
 
-**Home Page**
+## Tech Stack
 
-![Home](./docs/image/home.png)
+**Backend:** Go 1.21+, Gin, Viper
+**Frontend:** React 19, TypeScript, TailwindCSS, React Query
+**Deployment:** Docker, Docker Compose
 
-**Config Page**
+## Quick Start
 
-![Home](./docs/image/config.png)
+### Docker (Recommended)
 
-## RUN
+```bash
+docker-compose up -d
+```
 
-+ window
+Access the panel at `http://localhost:8084`
 
-  double click
+### Manual Build
 
-  ```sh
-  terraria-panel.exe
-  ```
+**Prerequisites:**
+- Go 1.21+
+- Node.js 18+
 
-+ Linux
+```bash
+# Build frontend
+cd frontend && npm ci && npm run build && cd ..
 
-  ```sh
-  chmod +x terraria-panel
-  ./terraria-panel
-  ```
+# Build backend
+go build -o terraria-panel .
 
-**Browser access http://localhost:8080**
+# Run
+./terraria-panel
+```
 
-## PORT
+## Configuration
 
-Default port **8080**, open the `config.ymal` file edit
+### Application Config (`config.yaml`)
 
 ```yaml
 web:
   port: 8080
+
+terraria:
+  binary_path: "./Terraria-1449/Linux/TerrariaServer.bin.x86_64"
+  config_path: "./config.txt"
 ```
 
+### Terraria Server Config (`config.txt`)
+
+See [Terraria Server Guide](docs/terraria-server-guide-zh.md) for detailed configuration options.
+
+## API Reference
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/game/status` | Get server status |
+| GET | `/api/game/start` | Start server |
+| GET | `/api/game/stop` | Stop server |
+| GET | `/api/game/config` | Get raw config |
+| POST | `/api/game/config` | Update raw config |
+| GET | `/api/config/structured` | Get structured config |
+| PATCH | `/api/config/structured` | Update structured config |
+| POST | `/api/game/cmd` | Send command |
+| GET | `/api/game/log` | Get logs (query: `lineNum`) |
+| GET | `/api/game/backup` | List backups |
+| GET | `/api/game/backup/restore` | Restore backup (query: `backupFilePath`) |
+| DELETE | `/api/game/backup` | Delete backup (query: `backupFilePath`) |
+
+## Ports
+
+- `8080` - Web panel (mapped to `8084` in Docker)
+- `7777` - Terraria game server
+
+## License
+
+MIT
