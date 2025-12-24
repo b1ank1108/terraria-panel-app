@@ -43,6 +43,8 @@ func RegisterRouter(r *gin.Engine) {
 	{
 		authGroup.POST("/game/config", editServerConfig)
 		authGroup.GET("/game/config", getServerConfig)
+		authGroup.GET("/config/structured", getConfigStructured)
+		authGroup.PATCH("/config/structured", updateConfigStructured)
 		authGroup.GET("/game/start", startGame)
 		authGroup.GET("/game/stop", stopGame)
 		authGroup.POST("/game/cmd", sendCmd)
@@ -53,10 +55,46 @@ func RegisterRouter(r *gin.Engine) {
 		authGroup.DELETE("/game/backup", deleteBackup)
 	}
 
-	r.LoadHTMLGlob("dist/index.html")                  // 添加入口index.html
-	r.Static("/static", "./dist/static")               // 添加资源路径
-	r.Static("/assets", "./dist/assets")               // 添加资源路径
-	r.StaticFile("/favicon.ico", "./dist/favicon.ico") // 添加资源路径
+	// API information endpoint
+	r.GET("/api", func(c *gin.Context) {
+		versionValue, _ := c.Get("version")
+		version := "unknown"
+		if v, ok := versionValue.(string); ok {
+			version = v
+		}
+
+		c.JSON(200, gin.H{
+			"service": "Terraria Panel API",
+			"version": version,
+			"status":  "running",
+			"endpoints": gin.H{
+				"game_config": gin.H{
+					"GET":  "/api/game/config - Get server configuration",
+					"POST": "/api/game/config - Update server configuration",
+				},
+				"game_control": gin.H{
+					"GET /api/game/start":  "Start Terraria server",
+					"GET /api/game/stop":   "Stop Terraria server",
+					"GET /api/game/status": "Get server status",
+					"POST /api/game/cmd":   "Send command to server",
+				},
+				"game_logs": gin.H{
+					"GET /api/game/log": "Get server logs (query param: lineNum)",
+				},
+				"game_backup": gin.H{
+					"GET /api/game/backup":         "List backup files",
+					"GET /api/game/backup/restore": "Restore from backup (query param: backupFilePath)",
+					"DELETE /api/game/backup":      "Delete backup (query param: backupFilePath)",
+				},
+			},
+		})
+	})
+
+	// Frontend routes
+	r.LoadHTMLGlob("dist/index.html")
+	r.Static("/static", "./dist/static")
+	r.Static("/assets", "./dist/assets")
+	r.StaticFile("/favicon.ico", "./dist/favicon.ico")
 	r.StaticFile("/terraria", "./dist/terraria")
 	r.StaticFile("/", "./dist/index.html")
 }

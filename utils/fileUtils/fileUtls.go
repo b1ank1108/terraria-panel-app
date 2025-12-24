@@ -166,8 +166,7 @@ func ReverseRead(filename string, lineNum uint) ([]string, error) {
 			return buff, err
 		}
 		if char[0] == '\n' {
-			// offset--  //windows跳过'\r'
-			lineNum-- //到此读取完一行
+			lineNum--
 			buff = append(buff, lineStr)
 			lineStr = ""
 			if lineNum == 0 {

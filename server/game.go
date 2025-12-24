@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -12,17 +11,32 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"terraria-panel/utils/fileUtils"
 	"time"
+
+	"gopkg.in/natefinch/lumberjack.v2"
+)
+
+type ServerState int
+
+const (
+	StateStopped ServerState = iota
+	StateStarting
+	StateRunning
+	StateStopping
+	StateCrashed
 )
 
 type Game struct {
 	lock       sync.Mutex
 	running    atomic.Bool
+	state      ServerState
 	send       chan []string
 	binPath    string
 	configPath string
 	stdin      io.WriteCloser
 	stdout     io.ReadCloser
+	startTime  time.Time
 }
 
 type BackupInfo struct {
@@ -35,12 +49,23 @@ type BackupInfo struct {
 
 const tLogsTxt = "t_log.txt"
 
+func getLogWriter() io.Writer {
+	return &lumberjack.Logger{
+		Filename:   tLogsTxt,
+		MaxSize:    100,
+		MaxBackups: 5,
+		MaxAge:     7,
+		Compress:   true,
+	}
+}
+
 func NewGame(binPath, configPath string) *Game {
 	running := atomic.Bool{}
 	running.Store(false)
 	game := &Game{
 		lock:       sync.Mutex{},
 		running:    running,
+		state:      StateStopped,
 		send:       make(chan []string),
 		binPath:    binPath,
 		configPath: configPath,
@@ -57,60 +82,67 @@ func (receiver *Game) Start() {
 		return
 	}
 	receiver.lock.Lock()
-	// 创建输出文件
-	logFile, err := os.Create(tLogsTxt)
-	if err != nil {
-		log.Println("Error creating log file:", err)
-		return
-	}
-	defer func(logFile *os.File) {
-		err := logFile.Close()
-		if err != nil {
-			receiver.lock.Unlock()
-		}
-	}(logFile)
+	receiver.state = StateStarting
+	receiver.startTime = time.Now()
 
-	// 创建一个 cmd 对象
+	logWriter := getLogWriter()
+
+	if err := os.Chmod(receiver.binPath, 0755); err != nil {
+		log.Printf("Warning: failed to set executable permission: %v\n", err)
+	}
+
 	cmd := exec.Command(receiver.binPath, "-config", receiver.configPath)
 	receiver.running.Store(true)
 	receiver.lock.Unlock()
-	// 获取子进程的 stdin、stdout 和 stderr
+
+	var err error
 	receiver.stdin, err = cmd.StdinPipe()
 	if err != nil {
 		log.Printf("Error getting stdin pipe: %v\n", err)
+		receiver.state = StateCrashed
+		receiver.running.Store(false)
 		return
 	}
 	receiver.stdout, err = cmd.StdoutPipe()
 	if err != nil {
 		log.Printf("Error getting stdout pipe: %v\n", err)
+		receiver.state = StateCrashed
+		receiver.running.Store(false)
 		return
 	}
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
 		log.Printf("Error getting stderr pipe: %v\n", err)
+		receiver.state = StateCrashed
+		receiver.running.Store(false)
 		return
 	}
 
-	// 启动子进程
 	if err := cmd.Start(); err != nil {
-		fmt.Printf("Error starting command: %v\n", err)
+		log.Printf("Error starting command: %v\n", err)
+		receiver.state = StateCrashed
+		receiver.running.Store(false)
 		return
 	}
 
-	// 开启 goroutine 实时读取子进程的输出并写入文件和控制台
+	receiver.state = StateRunning
+	log.Println("Terraria server started successfully")
+
 	go func() {
-		io.Copy(io.MultiWriter(os.Stdout, logFile), receiver.stdout)
+		io.Copy(io.MultiWriter(os.Stdout, logWriter), receiver.stdout)
 	}()
 	go func() {
-		io.Copy(io.MultiWriter(os.Stderr, logFile), stderr)
+		io.Copy(io.MultiWriter(os.Stderr, logWriter), stderr)
 	}()
 
-	// 等待子进程退出
 	if err := cmd.Wait(); err != nil {
 		log.Printf("Error waiting for command: %v\n", err)
+		receiver.state = StateCrashed
 		receiver.running.Store(false)
+		return
 	}
-	log.Println("Terraria process exit !!!")
+	log.Println("Terraria process exited")
+	receiver.state = StateStopped
 	receiver.running.Store(false)
 }
 
@@ -119,10 +151,13 @@ func (receiver *Game) Stop() {
 	defer receiver.lock.Unlock()
 
 	if receiver.running.Load() == true {
+		receiver.state = StateStopping
 		err := receiver.Send("exit")
 		if err != nil {
-			log.Println("stop game error", err)
+			log.Printf("stop game error: %v\n", err)
+			receiver.state = StateCrashed
 		} else {
+			receiver.state = StateStopped
 			receiver.running.Store(false)
 		}
 	}
@@ -145,41 +180,7 @@ func (receiver *Game) Send(cmd string) error {
 }
 
 func (receiver *Game) Logs(lineNum uint) ([]string, error) {
-	file, err := os.Open(tLogsTxt)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	//获取文件大小
-	fs, err := file.Stat()
-	fileSize := fs.Size()
-
-	var offset int64 = -1   //偏移量，初始化为-1，若为0则会读到EOF
-	char := make([]byte, 1) //用于读取单个字节
-	lineStr := ""           //存放一行的数据
-	buff := make([]string, 0, 100)
-	for (-offset) <= fileSize {
-		//通过Seek函数从末尾移动游标然后每次读取一个字节
-		file.Seek(offset, io.SeekEnd)
-		_, err := file.Read(char)
-		if err != nil {
-			return buff, err
-		}
-		if char[0] == '\n' {
-			// offset--  //windows跳过'\r'
-			lineNum-- //到此读取完一行
-			buff = append(buff, lineStr)
-			lineStr = ""
-			if lineNum == 0 {
-				return buff, nil
-			}
-		} else {
-			lineStr = string(char) + lineStr
-		}
-		offset--
-	}
-	buff = append(buff, lineStr)
-	return buff, nil
+	return fileUtils.ReverseRead(tLogsTxt, lineNum)
 }
 
 func (receiver *Game) GetConfig() (string, error) {
@@ -192,44 +193,56 @@ func (receiver *Game) GetConfig() (string, error) {
 }
 
 func (receiver *Game) EditConfig(config string) error {
-	filename := receiver.configPath
-	// 判断文件是否存在
-	var file *os.File
-	if _, err := os.Stat(filename); os.IsNotExist(err) {
+	tmpFile := receiver.configPath + ".tmp"
 
-		file, err = os.Create(filename)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-	} else {
-		//O_APPEND
-		file, err = os.OpenFile(filename, os.O_RDWR|os.O_TRUNC, 0666)
-		if err != nil {
-			return err
-		}
+	file, err := os.Create(tmpFile)
+	if err != nil {
+		return fmt.Errorf("failed to create temp config file: %w", err)
 	}
-	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
-
-		}
-	}(file)
+	defer os.Remove(tmpFile)
 
 	w := bufio.NewWriter(file)
-	_, err2 := w.WriteString(config)
-	if err2 != nil {
-		return err2
+	if _, err := w.WriteString(config); err != nil {
+		file.Close()
+		return fmt.Errorf("failed to write config: %w", err)
 	}
-	err := w.Flush()
-	if err != nil {
-		return err
+
+	if err := w.Flush(); err != nil {
+		file.Close()
+		return fmt.Errorf("failed to flush config: %w", err)
 	}
-	err = file.Sync()
-	if err != nil {
-		return err
+
+	if err := file.Sync(); err != nil {
+		file.Close()
+		return fmt.Errorf("failed to sync config: %w", err)
 	}
+
+	if err := file.Close(); err != nil {
+		return fmt.Errorf("failed to close temp config: %w", err)
+	}
+
+	if err := os.Rename(tmpFile, receiver.configPath); err != nil {
+		data, readErr := os.ReadFile(tmpFile)
+		if readErr != nil {
+			return fmt.Errorf("failed to rename config: %w", err)
+		}
+		if writeErr := os.WriteFile(receiver.configPath, data, 0644); writeErr != nil {
+			return fmt.Errorf("failed to write config fallback: %w", writeErr)
+		}
+	}
+
 	return nil
+}
+
+func (receiver *Game) GetServerInfo() (*ServerInfo, error) {
+	return ParseConfig(receiver.configPath)
+}
+
+func (receiver *Game) UpdateServerInfo(info *ServerInfo) error {
+	if err := ValidateConfig(info); err != nil {
+		return err
+	}
+	return WriteConfig(receiver.configPath, info)
 }
 
 func (receiver *Game) GetWorld() string {
@@ -237,56 +250,76 @@ func (receiver *Game) GetWorld() string {
 	if err != nil {
 		return ""
 	}
+	config = strings.ReplaceAll(config, "\r", "")
 	split := strings.Split(config, "\n")
 	for i := range split {
 		if strings.Contains(split[i], "world=") {
 			lines := strings.Split(split[i], "world=")
 			if len(lines) == 2 {
-				return lines[1]
+				return strings.TrimSpace(lines[1])
 			}
 		}
 	}
 	return ""
 }
 
-func (receiver *Game) GetBackupList() []BackupInfo {
+func (receiver *Game) GetBackupList() ([]BackupInfo, error) {
 	var backupList []BackupInfo
-	//获取文件或目录相关信息
 	dir := filepath.Dir(receiver.GetWorld())
-	log.Println("backup path: ", dir)
-	fileInfoList, err := ioutil.ReadDir(dir)
-	if err != nil {
-		log.Panicln(err)
+	if dir == "" || dir == "." {
+		return backupList, fmt.Errorf("invalid world directory")
 	}
-	for _, file := range fileInfoList {
-		if file.IsDir() {
+	log.Println("backup path: ", dir)
+	fileInfoList, err := os.ReadDir(dir)
+	if err != nil {
+		return backupList, fmt.Errorf("failed to read backup directory: %w", err)
+	}
+	for _, entry := range fileInfoList {
+		if entry.IsDir() {
 			continue
 		}
-		suffix := filepath.Ext(file.Name())
+		info, err := entry.Info()
+		if err != nil {
+			continue
+		}
+		suffix := filepath.Ext(entry.Name())
 		if strings.Contains(suffix, "bak") {
 			backup := BackupInfo{
-				FileName:   file.Name(),
-				FileSize:   file.Size(),
-				CreateTime: file.ModTime(),
-				Time:       file.ModTime().Unix(),
-				Path:       filepath.Join(dir, file.Name()),
+				FileName:   entry.Name(),
+				FileSize:   info.Size(),
+				CreateTime: info.ModTime(),
+				Time:       info.ModTime().Unix(),
+				Path:       filepath.Join(dir, entry.Name()),
 			}
 			backupList = append(backupList, backup)
 		}
 	}
-	return backupList
+	return backupList, nil
 }
 
 func (receiver *Game) Restore(backupFilePath string) error {
 	worldPath := receiver.GetWorld()
-	// 1. 删除文件A
-	err := os.Remove(worldPath)
-	if err != nil {
-		return err
+	if worldPath == "" {
+		return fmt.Errorf("world path is empty")
 	}
-	// 2. 将文件B重命名为文件A
-	err = os.Rename(backupFilePath, worldPath)
-	return err
+
+	tmpBackup := worldPath + ".old"
+
+	if _, err := os.Stat(worldPath); err == nil {
+		if err := os.Rename(worldPath, tmpBackup); err != nil {
+			return fmt.Errorf("failed to backup current world: %w", err)
+		}
+	}
+
+	if err := os.Rename(backupFilePath, worldPath); err != nil {
+		if _, statErr := os.Stat(tmpBackup); statErr == nil {
+			os.Rename(tmpBackup, worldPath)
+		}
+		return fmt.Errorf("failed to restore backup: %w", err)
+	}
+
+	os.Remove(tmpBackup)
+	return nil
 }
 
 func (receiver *Game) DeleteBackup(backupFilePath string) error {
