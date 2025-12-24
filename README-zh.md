@@ -1,5 +1,7 @@
 # Terraria 面板
 
+> **注意：** 本项目 fork 自 [carrot-hu23/terraria-panel-app](https://github.com/carrot-hu23/terraria-panel-app)
+
 基于 Go 和 React 构建的 Terraria 专用服务器 Web 管理面板。
 
 ## 功能特性

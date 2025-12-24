@@ -1,5 +1,7 @@
 # Terraria Panel
 
+> **Note:** This is a fork of [carrot-hu23/terraria-panel-app](https://github.com/carrot-hu23/terraria-panel-app)
+
 A web-based management panel for Terraria dedicated servers, built with Go and React.
 
 ## Features
