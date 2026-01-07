@@ -56,3 +56,4 @@ worlds/
 # Local assistant state
 .serena/
 .claude/
+.ace-tool/
