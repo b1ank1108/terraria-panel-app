@@ -51,7 +51,11 @@ yarn-error.log*
 
 # Runtime data
 logs/
-worlds/
+data/worlds/
+data/backups/
+
+# Server files (user provided)
+server/
 
 # Local assistant state
 .serena/

@@ -2,5 +2,5 @@ web:
   port: 8080
 
 terraria:
-  binary_path: "./Terraria-1449/Linux/TerrariaServer.bin.x86_64"
-  config_path: "./config.txt"
+  binary_path: "/app/Terraria-1449/Linux/TerrariaServer.bin.x86_64"
+  config_path: "/app/config/config.txt"
