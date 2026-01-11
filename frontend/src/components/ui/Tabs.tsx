@@ -17,22 +17,20 @@ export function Tabs({ tabs, defaultTab }: TabsProps) {
 
   return (
     <div className="w-full">
-      <div className="border-b border-slate-200">
-        <div className="flex flex-wrap gap-1">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
-                activeTab === tab.id
-                  ? 'border-b-2 border-blue-600 text-blue-600'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      <div className="flex flex-wrap gap-1 border-b-4 border-terra-wood-dark">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-6 py-2 text-sm font-bold uppercase tracking-wider transition-all border-t-4 ${
+              activeTab === tab.id
+                ? 'bg-terra-wood text-white border-terra-gold -mb-1'
+                : 'bg-terra-bg-light text-slate-300 border-transparent hover:text-terra-gold'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
       <div className="mt-4">
         {tabs.find((tab) => tab.id === activeTab)?.content}

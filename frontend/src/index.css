@@ -4,6 +4,85 @@
 
 @layer base {
   body {
-    @apply m-0 min-h-screen;
+    @apply m-0 min-h-screen bg-terra-bg text-slate-100;
+    background-image:
+      linear-gradient(rgba(26, 26, 46, 0.95), rgba(26, 26, 46, 0.95)),
+      url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Crect fill='%231E3A5F' width='100' height='100'/%3E%3Cpath d='M0 0h100v1H0zM0 20h100v1H0zM0 40h100v1H0zM0 60h100v1H0zM0 80h100v1H0z' fill='%234A7BA7' fill-opacity='0.05'/%3E%3C/svg%3E");
+  }
+}
+
+@layer components {
+  /* Terraria-style wooden border */
+  .terra-card {
+    @apply relative bg-terra-bg-card rounded-none p-6 shadow-terra;
+    border: 4px solid #8B5A2B;
+    box-shadow:
+      inset 0 0 0 2px #5D4037,
+      inset 0 0 0 4px #FFD700,
+      0 4px 0 0 #5D4037,
+      0 8px 16px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Terraria-style button */
+  .terra-btn {
+    @apply relative font-bold uppercase tracking-wider;
+    border: 3px solid #5D4037;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      0 3px 0 0 #5D4037;
+    transition: all 0.1s;
+  }
+
+  .terra-btn:active {
+    @apply translate-y-1;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      0 1px 0 0 #5D4037;
+  }
+
+  .terra-btn-primary {
+    @apply bg-terra-wood text-white;
+    background: linear-gradient(180deg, #C19A6B 0%, #8B5A2B 50%, #5D4037 100%);
+  }
+
+  .terra-btn-primary:hover {
+    background: linear-gradient(180deg, #D4AA7D 0%, #A0522D 50%, #6B4223 100%);
+  }
+
+  .terra-btn-secondary {
+    @apply bg-terra-blue text-white;
+    background: linear-gradient(180deg, #4A7BA7 0%, #1E3A5F 100%);
+  }
+
+  .terra-btn-secondary:hover {
+    background: linear-gradient(180deg, #5A8CB7 0%, #2E4A6F 100%);
+  }
+
+  .terra-btn-danger {
+    @apply bg-terra-red text-white;
+    background: linear-gradient(180deg, #FF6B6B 0%, #DC143C 100%);
+  }
+
+  .terra-btn-danger:hover {
+    background: linear-gradient(180deg, #FF7B7B 0%, #EC144C 100%);
+  }
+
+  /* Gold-accented headings */
+  .terra-heading {
+    @apply text-terra-gold font-bold;
+    text-shadow: 2px 2px 0 #5D4037;
+  }
+
+  /* Terraria-style input */
+  .terra-input {
+    @apply bg-terra-bg-light border-2 border-terra-wood-dark text-white rounded-none;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .terra-input:focus {
+    @apply border-terra-gold outline-none;
+    box-shadow:
+      inset 0 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 0 2px rgba(255, 215, 0, 0.3);
   }
 }

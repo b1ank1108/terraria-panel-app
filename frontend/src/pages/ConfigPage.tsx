@@ -10,7 +10,7 @@ export function ConfigPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-slate-900">服务器配置</h1>
+        <h1 className="terra-heading text-3xl">服务器配置</h1>
         <div className="flex gap-2">
           <Button
             size="sm"

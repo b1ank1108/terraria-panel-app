@@ -44,6 +44,7 @@ import {
   List,
   Gauge,
   Bug,
+  LogOut,
 } from 'lucide-react';
 
 const commandCategories = {
@@ -82,6 +83,7 @@ const commandCategories = {
     { cmd: 'clearitems', label: '清除掉落物', icon: Trash2 },
     { cmd: 'godmode', label: '无敌模式', icon: Shield },
     { cmd: 'hardmode', label: '困难模式', icon: Sparkles },
+    { cmd: 'exit', label: '关闭服务器', icon: LogOut },
   ],
   bossNormal: [
     { cmd: 'king', label: '史莱姆王', icon: Crown },
@@ -178,7 +180,7 @@ export function QuickActions() {
   return (
     <Card>
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-slate-900">快捷操作</h3>
+        <h3 className="text-lg font-semibold text-white">快捷操作</h3>
 
         {sendMutation.isSuccess && (
           <Alert variant="success">命令执行成功！</Alert>
@@ -192,8 +194,8 @@ export function QuickActions() {
 
         <Tabs tabs={tabs} defaultTab="time" />
 
-        <div className="pt-2 border-t border-slate-200">
-          <p className="text-sm font-medium text-slate-700 mb-2">发送消息</p>
+        <div className="pt-2 border-t border-terra-wood-dark">
+          <p className="text-sm font-medium text-slate-200 mb-2">发送消息</p>
           <div className="flex gap-2">
             <input
               type="text"
@@ -201,7 +203,7 @@ export function QuickActions() {
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="输入要广播的消息..."
-              className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-4 py-2 border border-terra-wood-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <Button
               onClick={handleSendMessage}

@@ -42,7 +42,7 @@ export function ConfigEditor() {
     <Card>
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-slate-900">配置编辑器</h3>
+          <h3 className="text-lg font-semibold text-white">配置编辑器</h3>
           <div className="flex gap-2">
             <Button
               size="sm"
@@ -87,14 +87,14 @@ export function ConfigEditor() {
         )}
 
         {isLoading ? (
-          <div className="flex items-center justify-center h-96 bg-slate-50 rounded-lg">
-            <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+          <div className="flex items-center justify-center h-96 bg-terra-bg-light rounded-lg">
+            <Loader2 className="w-6 h-6 animate-spin text-terra-gold" />
           </div>
         ) : (
           <textarea
             value={config}
             onChange={(e) => handleChange(e.target.value)}
-            className="w-full h-96 p-4 font-mono text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            className="w-full h-96 p-4 font-mono text-sm bg-terra-bg-light text-white border-2 border-terra-wood-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-terra-gold focus:border-terra-gold resize-none"
             placeholder="配置内容..."
           />
         )}

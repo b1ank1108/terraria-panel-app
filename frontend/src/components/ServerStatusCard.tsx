@@ -1,8 +1,9 @@
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { useServerStatus } from '../hooks/useServerStatus';
-import { useStartServer, useStopServer } from '../hooks/useServerControl';
+import { useStartServer, useSendCommand } from '../hooks/useServerControl';
 import { Play, Square, Loader2 } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 
 const worldSizeMap: Record<string, string> = {
   small: '小型',
@@ -20,8 +21,8 @@ const difficultyMap: Record<string, string> = {
 function InfoItem({ label, value }: { label: string; value: any }) {
   return (
     <div>
-      <p className="text-xs text-slate-500">{label}</p>
-      <p className="text-sm font-semibold text-slate-900">{value || '-'}</p>
+      <p className="text-xs text-slate-400">{label}</p>
+      <p className="text-sm font-semibold text-white">{value || '-'}</p>
     </div>
   );
 }
@@ -29,39 +30,61 @@ function InfoItem({ label, value }: { label: string; value: any }) {
 export function ServerStatusCard() {
   const { data: status, isLoading } = useServerStatus();
   const startMutation = useStartServer();
-  const stopMutation = useStopServer();
+  const sendCommand = useSendCommand();
+  const queryClient = useQueryClient();
 
   const handleStart = () => {
     startMutation.mutate();
   };
 
   const handleStop = () => {
-    stopMutation.mutate();
+    sendCommand.mutate('exit', {
+      onSuccess: () => {
+        // 立即刷新服务器状态以精确反映停止状态
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: ['serverStatus'] });
+        }, 1000); // 给服务器一点时间来处理停止命令
+      },
+    });
   };
 
   return (
     <Card>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-slate-500 mb-1">服务器状态</p>
+          <p className="text-sm text-slate-400 mb-1">服务器状态</p>
           {isLoading ? (
             <div className="flex items-center gap-2">
-              <Loader2 className="w-5 h-5 animate-spin text-slate-400" />
-              <span className="text-lg text-slate-600">加载中...</span>
+              <Loader2 className="w-5 h-5 animate-spin text-terra-gold" />
+              <span className="text-lg text-slate-300">加载中...</span>
             </div>
           ) : (
             <>
               <div className="flex items-center gap-2 mb-1">
                 <div
                   className={`w-3 h-3 rounded-full ${
-                    status?.running ? 'bg-green-500' : 'bg-red-500'
+                    sendCommand.isPending
+                      ? 'bg-yellow-500'
+                      : status?.running
+                      ? 'bg-terra-green'
+                      : 'bg-terra-red'
                   }`}
                 />
-                <p className="text-2xl font-bold text-slate-900">
-                  {status?.running ? '运行中' : '已停止'}
+                <p className="text-2xl font-bold text-white">
+                  {sendCommand.isPending
+                    ? '停止中...'
+                    : status?.running
+                    ? '运行中'
+                    : '已停止'
+                  }
                 </p>
               </div>
-              <p className="text-sm text-slate-400">{status?.status}</p>
+              <p className="text-sm text-slate-400">
+                {sendCommand.isPending
+                  ? '正在通过 exit 命令停止服务器'
+                  : status?.status
+                }
+              </p>
             </>
           )}
         </div>
@@ -81,11 +104,11 @@ export function ServerStatusCard() {
           </Button>
           <Button
             variant="secondary"
-            disabled={!status?.running || stopMutation.isPending || isLoading}
+            disabled={!status?.running || sendCommand.isPending || isLoading}
             onClick={handleStop}
             className="flex items-center gap-2"
           >
-            {stopMutation.isPending ? (
+            {sendCommand.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <Square className="w-4 h-4" />
@@ -96,7 +119,7 @@ export function ServerStatusCard() {
       </div>
 
       {status?.info && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-slate-200">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-terra-wood-dark">
           <InfoItem label="端口" value={status.info.port} />
           <InfoItem label="最大玩家" value={status.info.maxPlayers} />
           <InfoItem label="世界名称" value={status.info.worldName} />

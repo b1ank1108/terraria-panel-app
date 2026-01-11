@@ -83,7 +83,7 @@ export function ConfigForm() {
     <Card>
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-slate-900">表单配置</h3>
+          <h3 className="text-lg font-semibold text-white">表单配置</h3>
           <div className="flex gap-2">
             <Button
               size="sm"
@@ -192,8 +192,8 @@ export function ConfigForm() {
               className="md:col-span-2"
             />
 
-            <div className="md:col-span-2 pt-4 border-t border-slate-200">
-              <h4 className="text-sm font-semibold text-slate-700 mb-3">高级设置</h4>
+            <div className="md:col-span-2 pt-4 border-t border-terra-wood-dark">
+              <h4 className="text-sm font-semibold text-slate-200 mb-3">高级设置</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Checkbox
                   label="作弊保护 (Secure)"

@@ -31,7 +31,7 @@ export function CommandInput() {
   return (
     <Card>
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-slate-900">发送命令</h3>
+        <h3 className="text-lg font-semibold text-white">发送命令</h3>
 
         {sendMutation.isSuccess && (
           <Alert variant="success">命令发送成功！</Alert>
@@ -50,7 +50,7 @@ export function CommandInput() {
             onChange={(e) => setCommand(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="输入服务器命令..."
-            className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 bg-terra-bg-light text-white border border-terra-wood-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-terra-gold"
           />
           <Button
             onClick={handleSend}
@@ -68,13 +68,13 @@ export function CommandInput() {
 
         {history.length > 0 && (
           <div className="space-y-2">
-            <p className="text-sm font-medium text-slate-700">命令历史</p>
+            <p className="text-sm font-medium text-slate-200">命令历史</p>
             <div className="space-y-1">
               {history.map((cmd, i) => (
                 <button
                   key={i}
                   onClick={() => setCommand(cmd)}
-                  className="block w-full text-left px-3 py-2 text-sm bg-slate-50 hover:bg-slate-100 rounded border border-slate-200 transition-colors"
+                  className="block w-full text-left px-3 py-2 text-sm bg-terra-bg-light text-white hover:bg-terra-wood rounded border border-terra-wood-dark transition-colors"
                 >
                   {cmd}
                 </button>
