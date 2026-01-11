@@ -45,9 +45,9 @@ export function BackupTable() {
     <Card>
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-slate-900">备份列表</h3>
+          <h3 className="text-lg font-semibold text-white">备份列表</h3>
           {data?.count !== undefined && (
-            <span className="text-sm text-slate-500">共 {data.count} 个备份</span>
+            <span className="text-sm text-slate-400">共 {data.count} 个备份</span>
           )}
         </div>
 
@@ -104,17 +104,17 @@ export function BackupTable() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-200">
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700">
+                <tr className="border-b border-terra-wood-dark">
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-slate-200">
                     文件名
                   </th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700">
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-slate-200">
                     大小
                   </th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700">
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-slate-200">
                     修改时间
                   </th>
-                  <th className="text-right py-3 px-4 text-sm font-semibold text-slate-700">
+                  <th className="text-right py-3 px-4 text-sm font-semibold text-slate-200">
                     操作
                   </th>
                 </tr>
@@ -122,14 +122,14 @@ export function BackupTable() {
               <tbody>
                 {data.backups.map((backup) => (
                   <tr key={backup.path} className="border-b border-slate-100 hover:bg-slate-50">
-                    <td className="py-3 px-4 text-sm text-slate-900 font-mono">
-                      {backup.name}
+                    <td className="py-3 px-4 text-sm text-white font-mono">
+                      {backup.fileName}
                     </td>
-                    <td className="py-3 px-4 text-sm text-slate-600">
-                      {formatSize(backup.size)}
+                    <td className="py-3 px-4 text-sm text-slate-300">
+                      {formatSize(backup.fileSize)}
                     </td>
-                    <td className="py-3 px-4 text-sm text-slate-600">
-                      {formatDate(backup.modTime)}
+                    <td className="py-3 px-4 text-sm text-slate-300">
+                      {formatDate(backup.createTime)}
                     </td>
                     <td className="py-3 px-4 text-right">
                       <div className="flex justify-end gap-2">

@@ -46,10 +46,11 @@ export interface LogsResponse {
 }
 
 export interface BackupInfo {
-  name: string;
+  fileName: string;
   path: string;
-  size: number;
-  modTime: string;
+  fileSize: number;
+  createTime: string;
+  time: number;
 }
 
 export interface BackupsResponse {

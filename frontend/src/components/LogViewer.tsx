@@ -28,7 +28,7 @@ export function LogViewer({ lineNum = 200, autoRefresh = true }: LogViewerProps)
   return (
     <Card>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-slate-900">服务器日志</h3>
+        <h3 className="text-lg font-semibold text-white">服务器日志</h3>
         <div className="flex gap-2">
           <Button
             size="sm"
@@ -70,7 +70,7 @@ export function LogViewer({ lineNum = 200, autoRefresh = true }: LogViewerProps)
           </div>
         ) : data?.logs && data.logs.length > 0 ? (
           <>
-            {data.logs.map((log, i) => (
+            {[...data.logs].reverse().map((log, i) => (
               <div key={i} className="whitespace-pre-wrap break-words">
                 {log}
               </div>
@@ -78,14 +78,14 @@ export function LogViewer({ lineNum = 200, autoRefresh = true }: LogViewerProps)
             <div ref={logEndRef} />
           </>
         ) : (
-          <div className="flex items-center justify-center h-full text-slate-500">
+          <div className="flex items-center justify-center h-full text-slate-400">
             暂无日志
           </div>
         )}
       </div>
 
       {data?.count !== undefined && (
-        <p className="text-sm text-slate-500 mt-2">
+        <p className="text-sm text-slate-400 mt-2">
           共 {data.count} 条日志
         </p>
       )}
