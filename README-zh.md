@@ -60,13 +60,40 @@
 
 ### 使用 Docker（推荐）
 
-最简单的部署方式，一行命令搞定：
+#### 1. 准备服务器文件
 
 ```bash
-docker-compose up -d
+# 复制 Terraria Linux 服务器文件到项目
+mkdir -p server
+cp -r /path/to/Terraria-1449/Linux ./server/
+
+# 创建数据目录
+mkdir -p data/worlds data/backups
+```
+
+#### 2. 启动服务
+
+```bash
+docker-compose up -d --build
 ```
 
 🌐 访问面板：[http://localhost:8084](http://localhost:8084)
+
+#### 目录结构
+
+```
+terraria-panel-app/
+├── config/              # 配置文件
+│   ├── panel.yaml      # 面板配置
+│   └── server.txt      # 服务器配置
+├── data/               # 数据目录
+│   ├── worlds/         # 世界文件
+│   └── backups/        # 备份文件
+├── server/             # 服务器程序（用户自行添加）
+└── logs/               # 日志
+```
+
+详细说明请参考：[目录结构指南](docs/directory-structure.md)
 
 ### 手动构建
 
@@ -104,21 +131,21 @@ go build -o terraria-panel .
 ## ⚙️ 配置指南
 
 <details>
-<summary><b>📝 应用配置（config.yaml）</b></summary>
+<summary><b>📝 应用配置（config/panel.yaml）</b></summary>
 
 ```yaml
 web:
   port: 8080  # Web 面板端口
 
 terraria:
-  binary_path: "./Terraria-1449/Linux/TerrariaServer.bin.x86_64"  # 服务器二进制文件路径
-  config_path: "./config.txt"  # 服务器配置文件路径
+  binary_path: "./server/Linux/TerrariaServer.bin.x86_64"  # 服务器二进制文件路径
+  config_path: "./config/server.txt"  # 服务器配置文件路径
 ```
 
 </details>
 
 <details>
-<summary><b>🎮 Terraria 服务器配置（config.txt）</b></summary>
+<summary><b>🎮 Terraria 服务器配置（config/server.txt）</b></summary>
 
 详细的配置选项请参考：[Terraria 服务器配置指南](docs/terraria-server-guide-zh.md)
 
@@ -182,7 +209,7 @@ terraria:
 <details>
 <summary><b>如何修改 Web 面板的端口？</b></summary>
 
-编辑 `config.yaml` 文件，修改 `web.port` 的值即可。
+编辑 `config/panel.yaml` 文件，修改 `web.port` 的值即可。
 
 Docker 环境下还需要修改 `docker-compose.yml` 中的端口映射。
 
@@ -192,9 +219,9 @@ Docker 环境下还需要修改 `docker-compose.yml` 中的端口映射。
 <summary><b>服务器无法启动怎么办？</b></summary>
 
 请检查：
-1. `config.yaml` 中的 `binary_path` 是否正确
-2. Terraria 服务器二进制文件是否有执行权限
-3. `config.txt` 配置是否正确
+1. `config/panel.yaml` 中的 `binary_path` 是否正确
+2. `server/` 目录下是否有 Terraria 服务器文件
+3. `config/server.txt` 配置是否正确
 4. 查看日志获取详细错误信息
 
 </details>

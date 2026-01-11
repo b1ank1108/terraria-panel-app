@@ -60,13 +60,40 @@ Easily list, restore, and delete world backup files
 
 ### Using Docker (Recommended)
 
-The simplest deployment method - just one command:
+#### 1. Prepare Server Files
 
 ```bash
-docker-compose up -d
+# Copy Terraria Linux server files to project
+mkdir -p server
+cp -r /path/to/Terraria-1449/Linux ./server/
+
+# Create data directories
+mkdir -p data/worlds data/backups
+```
+
+#### 2. Start Service
+
+```bash
+docker-compose up -d --build
 ```
 
 🌐 Access the panel at: [http://localhost:8084](http://localhost:8084)
+
+#### Directory Structure
+
+```
+terraria-panel-app/
+├── config/              # Configuration files
+│   ├── panel.yaml      # Panel config
+│   └── server.txt      # Server config
+├── data/               # Data directories
+│   ├── worlds/         # World files
+│   └── backups/        # Backup files
+├── server/             # Server binaries (user provided)
+└── logs/               # Logs
+```
+
+See [Directory Structure Guide](docs/directory-structure.md) for details.
 
 ### Manual Build
 
@@ -104,21 +131,21 @@ go build -o terraria-panel .
 ## ⚙️ Configuration
 
 <details>
-<summary><b>📝 Application Config (config.yaml)</b></summary>
+<summary><b>📝 Application Config (config/panel.yaml)</b></summary>
 
 ```yaml
 web:
   port: 8080  # Web panel port
 
 terraria:
-  binary_path: "./Terraria-1449/Linux/TerrariaServer.bin.x86_64"  # Server binary path
-  config_path: "./config.txt"  # Server configuration file path
+  binary_path: "./server/Linux/TerrariaServer.bin.x86_64"  # Server binary path
+  config_path: "./config/server.txt"  # Server configuration file path
 ```
 
 </details>
 
 <details>
-<summary><b>🎮 Terraria Server Config (config.txt)</b></summary>
+<summary><b>🎮 Terraria Server Config (config/server.txt)</b></summary>
 
 For detailed configuration options, please refer to: [Terraria Server Guide](docs/terraria-server-guide-zh.md)
 
@@ -182,7 +209,7 @@ For detailed configuration options, please refer to: [Terraria Server Guide](doc
 <details>
 <summary><b>How do I change the web panel port?</b></summary>
 
-Edit the `config.yaml` file and modify the `web.port` value.
+Edit the `config/panel.yaml` file and modify the `web.port` value.
 
 In Docker environments, you also need to update the port mapping in `docker-compose.yml`.
 
@@ -192,9 +219,9 @@ In Docker environments, you also need to update the port mapping in `docker-comp
 <summary><b>What if the server fails to start?</b></summary>
 
 Please check:
-1. Is the `binary_path` in `config.yaml` correct?
-2. Does the Terraria server binary have execute permissions?
-3. Is the `config.txt` configuration correct?
+1. Is the `binary_path` in `config/panel.yaml` correct?
+2. Does the `server/` directory contain Terraria server files?
+3. Is the `config/server.txt` configuration correct?
 4. Check the logs for detailed error information
 
 </details>
