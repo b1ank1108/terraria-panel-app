@@ -97,4 +97,16 @@ func RegisterRouter(r *gin.Engine) {
 	r.StaticFile("/favicon.ico", "./dist/favicon.ico")
 	r.StaticFile("/terraria", "./dist/terraria")
 	r.StaticFile("/", "./dist/index.html")
+
+	// SPA fallback - serve index.html for all non-API routes
+	r.NoRoute(func(c *gin.Context) {
+		path := c.Request.URL.Path
+		// Don't redirect API routes
+		if len(path) >= 4 && path[:4] == "/api" {
+			c.JSON(404, gin.H{"error": "Not Found"})
+			return
+		}
+		// Serve index.html for SPA routing
+		c.File("./dist/index.html")
+	})
 }
