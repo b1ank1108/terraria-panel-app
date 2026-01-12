@@ -1,0 +1,47 @@
+# Terraria Server Configuration
+
+# Load a world and automatically start the server
+world=/app/worlds/world1.wld
+
+# Creates a new world if none is found
+# 1=small, 2=medium, 3=large
+autocreate=1
+
+# World seed for autocreate
+seed=AwesomeSeed
+
+# World name for autocreate
+worldname=Terraria
+
+# World difficulty: 0=classic, 1=expert, 2=master, 3=journey
+difficulty=0
+
+# Max players (1-255)
+maxplayers=8
+
+# Server port
+port=7777
+
+# Server password (leave empty for no password)
+password=
+
+# Message of the day
+motd=Welcome to Terraria Server
+
+# World rollback backups to keep
+worldrollbackstokeep=3
+
+# Banlist file
+banlist=banlist.txt
+
+# Secure (anti-cheat)
+secure=1
+
+# Language: en-US, zh-Hans, etc.
+language=zh-Hans
+
+# UPnP port forwarding
+upnp=0
+
+# NPC streaming (0=off, lower=more accurate but more bandwidth)
+npcstream=0

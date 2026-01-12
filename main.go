@@ -22,6 +22,9 @@ var (
 func main() {
 	config.Init(cfgFile, &conf)
 
+	// 将配置传递给 API 包
+	api.SetConfig(&conf)
+
 	router := gin.New()
 	router.Use(func(c *gin.Context) {
 		c.Set("version", version)

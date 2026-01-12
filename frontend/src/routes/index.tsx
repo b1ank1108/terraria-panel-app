@@ -4,16 +4,27 @@ import { DashboardPage } from '../pages/DashboardPage';
 import { ConfigPage } from '../pages/ConfigPage';
 import { ConsolePage } from '../pages/ConsolePage';
 import { BackupPage } from '../pages/BackupPage';
+import { LoginPage } from '../pages/LoginPage';
+import { ProtectedRoute } from '../components/ProtectedRoute';
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: <MainLayout />,
+    path: '/login',
+    element: <LoginPage />,
+  },
+  {
+    element: <ProtectedRoute />,
     children: [
-      { index: true, element: <DashboardPage /> },
-      { path: 'config', element: <ConfigPage /> },
-      { path: 'console', element: <ConsolePage /> },
-      { path: 'backups', element: <BackupPage /> },
+      {
+        path: '/',
+        element: <MainLayout />,
+        children: [
+          { index: true, element: <DashboardPage /> },
+          { path: 'config', element: <ConfigPage /> },
+          { path: 'console', element: <ConsolePage /> },
+          { path: 'backups', element: <BackupPage /> },
+        ],
+      },
     ],
   },
 ]);

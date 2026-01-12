@@ -13,6 +13,12 @@ type Config struct {
 		BinaryPath string `mapstructure:"binary_path"`
 		ConfigPath string `mapstructure:"config_path"`
 	} `mapstructure:"terraria"`
+	Auth struct {
+		Username   string `mapstructure:"username"`
+		Password   string `mapstructure:"password"`
+		JwtSecret  string `mapstructure:"jwt_secret"`
+		TokenHours int    `mapstructure:"token_hours"`
+	} `mapstructure:"auth"`
 }
 
 func Init(cfgFile string, conf *Config) {

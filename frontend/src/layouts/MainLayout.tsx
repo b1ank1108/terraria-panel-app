@@ -1,13 +1,21 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import { LayoutDashboard, Settings, Terminal, Database } from 'lucide-react';
+import { LayoutDashboard, Settings, Terminal, Database, LogOut } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { Button } from '../components/ui/Button';
 
 export function MainLayout() {
+  const { user, logout } = useAuth();
+
   const navItems = [
     { to: '/', icon: LayoutDashboard, label: '仪表盘' },
     { to: '/config', icon: Settings, label: '配置' },
     { to: '/console', icon: Terminal, label: '控制台' },
     { to: '/backups', icon: Database, label: '备份' },
   ];
+
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     <div className="flex min-h-screen">
@@ -40,6 +48,21 @@ export function MainLayout() {
         <header className="bg-terra-bg-card border-b-4 border-terra-wood-dark px-6 py-4">
           <div className="flex items-center justify-between">
             <h2 className="terra-heading text-lg">服务器管理</h2>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-terra-gold">
+                <span className="text-sm">欢迎,</span>
+                <span className="font-bold">👑 {user?.username}</span>
+              </div>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleLogout}
+                className="flex items-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                退出登录
+              </Button>
+            </div>
           </div>
         </header>
 

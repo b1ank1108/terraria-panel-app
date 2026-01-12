@@ -4,3 +4,9 @@ web:
 terraria:
   binary_path: "/app/Terraria-1449/Linux/TerrariaServer.bin.x86_64"
   config_path: "/app/config/config.txt"
+
+auth:
+  username: "terraria"
+  password: "terraria123"
+  jwt_secret: "terraria-panel-secret-key"
+  token_hours: 2400

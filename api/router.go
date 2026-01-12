@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"strings"
+	"terraria-panel/internal/middleware"
 )
 
 func Logger() gin.HandlerFunc {
@@ -26,20 +27,24 @@ func Logger() gin.HandlerFunc {
 	})
 }
 
+// authMiddleware 返回JWT认证中间件
+func authMiddleware() gin.HandlerFunc {
+	return middleware.JWTAuthMiddleware(appConfig.Auth.JwtSecret)
+}
+
 func RegisterRouter(r *gin.Engine) {
 
 	r.Use(Logger(), gin.Recovery())
 
-	// r.POST("/api/login", loginHandler)
+	// 登录接口（无需认证）
+	r.POST("/api/login", loginHandler)
 
-	//apiGroup := r.Group("/api")
-	//anonymousGroup := apiGroup.Group("")
-	//{
-	//
-	//}
+	// 健康检查接口（无需认证）
+	r.GET("/api/game/status", gameStatus)
 
+	// 需要认证的接口组
 	authGroup := r.Group("/api")
-	// authGroup.Use(auth.JWTAuthMiddleware())
+	authGroup.Use(authMiddleware())
 	{
 		authGroup.POST("/game/config", editServerConfig)
 		authGroup.GET("/game/config", getServerConfig)
@@ -49,7 +54,6 @@ func RegisterRouter(r *gin.Engine) {
 		authGroup.GET("/game/stop", stopGame)
 		authGroup.POST("/game/cmd", sendCmd)
 		authGroup.GET("/game/log", gameLogs)
-		authGroup.GET("/game/status", gameStatus)
 		authGroup.GET("/game/backup", gameBackup)
 		authGroup.GET("/game/backup/restore", restoreBackup)
 		authGroup.DELETE("/game/backup", deleteBackup)
