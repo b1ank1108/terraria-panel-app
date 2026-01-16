@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import { LayoutDashboard, Settings, Terminal, Database, LogOut } from 'lucide-react';
+import { LayoutDashboard, Settings, Terminal, Database, LogOut, Gamepad2, Crown } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/Button';
 
@@ -22,7 +22,10 @@ export function MainLayout() {
       {/* Terraria-style sidebar */}
       <aside className="w-64 bg-gradient-to-b from-terra-bg-light to-terra-bg text-white flex flex-col border-r-4 border-terra-wood-dark">
         <div className="p-6 border-b-2 border-terra-gold">
-          <h1 className="terra-heading text-xl">🎮 Terraria 管理面板</h1>
+          <h1 className="terra-heading text-xl flex items-center gap-2">
+            <Gamepad2 className="w-6 h-6" />
+            Terraria 管理面板
+          </h1>
         </div>
         <nav className="flex-1 p-4 space-y-2">
           {navItems.map(({ to, icon: Icon, label }) => (
@@ -51,7 +54,8 @@ export function MainLayout() {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-terra-gold">
                 <span className="text-sm">欢迎,</span>
-                <span className="font-bold">👑 {user?.username}</span>
+                <Crown className="w-4 h-4" />
+                <span className="font-bold">{user?.username}</span>
               </div>
               <Button
                 variant="secondary"

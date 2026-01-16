@@ -203,7 +203,7 @@ export function QuickActions() {
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="输入要广播的消息..."
-              className="flex-1 px-4 py-2 border border-terra-wood-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="terra-input flex-1 px-4 py-2"
             />
             <Button
               onClick={handleSendMessage}

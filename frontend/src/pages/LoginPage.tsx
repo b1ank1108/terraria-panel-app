@@ -5,6 +5,7 @@ import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Alert } from '../components/ui/Alert';
+import { Castle, Swords, Loader2, ShieldCheck } from 'lucide-react';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -39,8 +40,9 @@ export function LoginPage() {
         <Card className="p-8 shadow-2xl">
           {/* 标题部分 */}
           <div className="text-center mb-8">
-            <h1 className="terra-heading text-3xl mb-2 tracking-wider">
-              🏰 Terraria Panel
+            <h1 className="terra-heading text-3xl mb-2 tracking-wider flex items-center justify-center gap-3">
+              <Castle className="w-8 h-8" />
+              Terraria Panel
             </h1>
             <p className="text-terra-gold text-sm font-bold uppercase tracking-widest border-b border-terra-wood pb-2 inline-block">
               服务器管理面板
@@ -84,16 +86,27 @@ export function LoginPage() {
             <Button
               type="submit"
               size="lg"
-              className="w-full mt-8"
+              className="w-full mt-8 flex items-center justify-center gap-2"
               disabled={isSubmitting}
             >
-              {isSubmitting ? '🔄 正在登录...' : '⚔️ 进入世界'}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  正在登录...
+                </>
+              ) : (
+                <>
+                  <Swords className="w-5 h-5" />
+                  进入世界
+                </>
+              )}
             </Button>
           </form>
 
           {/* 底部信息 */}
-          <div className="mt-6 text-center text-terra-wood text-sm">
-            <p>🛡️ 安全认证登录</p>
+          <div className="mt-6 text-center text-terra-wood text-sm flex items-center justify-center gap-2">
+            <ShieldCheck className="w-4 h-4" />
+            <p>安全认证登录</p>
           </div>
         </Card>
       </div>

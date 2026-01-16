@@ -22,10 +22,10 @@ export function Tabs({ tabs, defaultTab }: TabsProps) {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-6 py-2 text-sm font-bold uppercase tracking-wider transition-all border-t-4 ${
+            className={`px-6 py-2 text-sm font-bold uppercase tracking-wider transition-all cursor-pointer border-t-4 ${
               activeTab === tab.id
                 ? 'bg-terra-wood text-white border-terra-gold -mb-1'
-                : 'bg-terra-bg-light text-slate-300 border-transparent hover:text-terra-gold'
+                : 'bg-terra-bg-light text-slate-300 border-transparent hover:text-terra-gold hover:bg-terra-bg-light/80'
             }`}
           >
             {tab.label}

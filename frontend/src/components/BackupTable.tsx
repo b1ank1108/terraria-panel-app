@@ -121,7 +121,7 @@ export function BackupTable() {
               </thead>
               <tbody>
                 {data.backups.map((backup) => (
-                  <tr key={backup.path} className="border-b border-slate-100 hover:bg-slate-50">
+                  <tr key={backup.path} className="border-b border-terra-wood-dark/30 hover:bg-terra-bg-light/50 transition-colors">
                     <td className="py-3 px-4 text-sm text-white font-mono">
                       {backup.fileName}
                     </td>

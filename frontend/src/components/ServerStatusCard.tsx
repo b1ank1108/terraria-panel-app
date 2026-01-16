@@ -62,12 +62,12 @@ export function ServerStatusCard() {
             <>
               <div className="flex items-center gap-2 mb-1">
                 <div
-                  className={`w-3 h-3 rounded-full ${
+                  className={`status-dot ${
                     sendCommand.isPending
-                      ? 'bg-yellow-500'
+                      ? 'status-dot-pending'
                       : status?.running
-                      ? 'bg-terra-green'
-                      : 'bg-terra-red'
+                      ? 'status-dot-online'
+                      : 'status-dot-offline'
                   }`}
                 />
                 <p className="text-2xl font-bold text-white">

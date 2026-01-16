@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        display: ['Russo One', 'system-ui', 'sans-serif'],
+        body: ['Chakra Petch', 'system-ui', 'sans-serif'],
+      },
       colors: {
         terra: {
           wood: {
@@ -44,6 +48,20 @@ export default {
         'terra': '0 4px 0 0 #5D4037, 0 8px 16px rgba(0,0,0,0.4)',
         'terra-sm': '0 2px 0 0 #5D4037, 0 4px 8px rgba(0,0,0,0.3)',
         'gold-glow': '0 0 12px rgba(255, 215, 0, 0.5)',
+      },
+      animation: {
+        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+        'status-online': 'status-online 2s ease-in-out infinite',
+      },
+      keyframes: {
+        'pulse-glow': {
+          '0%, 100%': { opacity: '1', boxShadow: '0 0 8px currentColor' },
+          '50%': { opacity: '0.7', boxShadow: '0 0 16px currentColor' },
+        },
+        'status-online': {
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.2)', opacity: '0.8' },
+        },
       },
     },
   },
